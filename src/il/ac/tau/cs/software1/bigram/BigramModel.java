@@ -1,6 +1,10 @@
 package il.ac.tau.cs.software1.bigram;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Locale;
 
 public class BigramModel {
@@ -9,7 +13,8 @@ public class BigramModel {
     public static final String COUNTS_FILE_SUFFIX = ".counts";
     public static final String SOME_NUM = "some_num";
     public static final int ELEMENT_NOT_FOUND = -1;
-
+    private static final String SRC_PATH = "HW2" + File.separator;
+    //private static final String SRC_PATH = ".." + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator;
     String[] mVocabulary;
     int[][] mBigramCounts;
 
@@ -79,8 +84,59 @@ public class BigramModel {
      * @post: mBigramCounts = prev(mBigramCounts)
      */
     public String[] buildVocabularyIndex(String fileName) throws IOException { // Question 1
-        // TODO: implement
-        return null;
+        
+        String file_path = SRC_PATH + fileName;
+        File srcFile = new File(file_path);
+        BufferedReader br = new BufferedReader(new FileReader(srcFile));
+
+        String[] temp_vocab = new String[MAX_VOCABULARY_SIZE];
+        int wordCnt = 0;
+        String line;
+        while ((line = br.readLine()) != null  && wordCnt < MAX_VOCABULARY_SIZE)
+            {
+                String[] tokens = line.trim().split("\\s+");
+                for (String word:tokens)
+                {
+                    String normWord = normalizeWord(word);
+                    if (normWord != null && !isWordinVocab(temp_vocab, normWord))
+                    {
+                        temp_vocab[wordCnt] = normWord;
+                        wordCnt ++;
+                    }
+                }
+            }
+
+        String[] vocab = new String[wordCnt];
+        
+        for (int i = 0; i<wordCnt; i++)
+        {
+            vocab[i] = temp_vocab[i];
+        }
+
+        br.close();
+        return vocab;
+    }
+
+    /*
+    * @pre: word is normalized
+    * @pre: all tokens in vocab are normalized
+
+    * @post: vocab = prev(vocab)
+    */
+    private static boolean isWordinVocab(String[] vocab, String word)
+    {
+        int i = 0;
+        String token;
+        while(i<vocab.length && vocab[i] != null)
+        {
+            token = vocab[i];
+            if (token.equals(word)){
+                return true;
+            }
+            i++;
+         
+        }
+        return  false;
     }
 
     /*
