@@ -13,8 +13,6 @@ public class BigramModel {
     public static final String COUNTS_FILE_SUFFIX = ".counts";
     public static final String SOME_NUM = "some_num";
     public static final int ELEMENT_NOT_FOUND = -1;
-    private static final String SRC_PATH = "HW2" + File.separator;
-    //private static final String SRC_PATH = ".." + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator;
     String[] mVocabulary;
     int[][] mBigramCounts;
 
@@ -92,10 +90,7 @@ public class BigramModel {
 
     
 
-    private static String buildPath(String fileName)
-    {
-        return SRC_PATH + fileName;
-    }
+
 
 /*
      * @post: mVocabulary = prev(mVocabulary)
@@ -104,8 +99,8 @@ public class BigramModel {
 
     public String[] buildVocabularyIndex(String fileName) throws IOException { // Question 1
         
-        String file_path = buildPath(fileName);
-        File srcFile = new File(file_path);
+
+        File srcFile = new File(fileName);
         BufferedReader br = new BufferedReader(new FileReader(srcFile));
 
         String[] temp_vocab = new String[MAX_VOCABULARY_SIZE];
@@ -164,8 +159,7 @@ public class BigramModel {
      */
     public int[][] buildCountsArray(String fileName, String[] vocabulary) throws IOException { // Question 2
         int[][] bigramCounts = new int[vocabulary.length][vocabulary.length];
-        String path = buildPath(fileName);
-        File srcFile = new File(path);
+        File srcFile = new File(fileName);
         BufferedReader br = new BufferedReader(new FileReader(srcFile));
         String line;
         
