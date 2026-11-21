@@ -311,12 +311,16 @@ public class BigramModel {
      * @post: if sentence is probable, according to the model, $ret = true, else, $ret = false
      */
     public boolean isLegalSentence(String sentence) { // Question 5
-        if (isSpecialSentence(sentence))
+        if (sentence == "")
         {
             return  true;
         }
-
-        String[] tokens = sentence.trim().split(" ");
+        String[]tokens = sentence.trim().split(" ");
+        if (tokens.length == 1)
+        {
+            return findIndex(this.mVocabulary, tokens[0]) != -1;
+        }
+        
 
         for (int i = 0; i < tokens.length-1; i++)
         {
@@ -329,20 +333,6 @@ public class BigramModel {
         return true;
     }
 
-
-    private boolean isSpecialSentence(String sentence)
-    {
-        if (sentence == "")
-        {
-            return  true;
-        }
-        String[]tokens = sentence.trim().split(" ");
-        if (tokens.length == 1)
-        {
-            return findIndex(this.mVocabulary, tokens[0]) != -1;
-        }
-        return false;
-    }
     ///////////////////////////////////////////////////////////////////////////
     // Queries on the model - already implemented for you.
     // They start working once Questions 1 - 2 are done.
