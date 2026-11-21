@@ -59,6 +59,17 @@ public class BigramModel {
     }
 
     /*
+    * @post: tokens in the input array are normalized
+    */
+    private static void normalizeArray(String[] tokens)
+    {
+        for (int i = 0; i<tokens.length; i++)
+        {
+            tokens[i] = normalizeWord(tokens[i]);
+        }
+    }
+
+    /*
      * @pre: vocabulary != null
      * @post: $ret = the index of word in vocabulary, or ELEMENT_NOT_FOUND if
      * word is null or does not appear in it
@@ -79,13 +90,21 @@ public class BigramModel {
     // Questions 1 - 5: implement these
     ///////////////////////////////////////////////////////////////////////////
 
-    /*
+    
+
+    private static String buildPath(String fileName)
+    {
+        return SRC_PATH + fileName;
+    }
+
+/*
      * @post: mVocabulary = prev(mVocabulary)
      * @post: mBigramCounts = prev(mBigramCounts)
      */
+
     public String[] buildVocabularyIndex(String fileName) throws IOException { // Question 1
         
-        String file_path = SRC_PATH + fileName;
+        String file_path = buildPath(fileName);
         File srcFile = new File(file_path);
         BufferedReader br = new BufferedReader(new FileReader(srcFile));
 
@@ -144,8 +163,49 @@ public class BigramModel {
      * @post: mBigramCounts = prev(mBigramCounts)
      */
     public int[][] buildCountsArray(String fileName, String[] vocabulary) throws IOException { // Question 2
-        // TODO: implement
-        return null;
+        int[][] bigramCounts = new int[vocabulary.length][vocabulary.length];
+        String path = buildPath(fileName);
+        File srcFile = new File(path);
+        BufferedReader br = new BufferedReader(new FileReader(srcFile));
+        String line;
+        
+        
+        int last_index = -1;
+        int current_index = -1;
+        while ((line = br.readLine()) != null)
+        {
+            
+
+            
+            String[] tokens = line.trim().split("\\s+");
+
+            normalizeArray(tokens);
+            
+
+            //Ok so apparently this isn't needed, but I don't want to esrase it, so this is commented.
+
+            //Check for the last word from the last line and the firts word from the current line.
+            // if (tokens.length > 0){
+            //     current_index = findIndex(vocabulary, tokens[0]);
+            //     if (last_index != -1 && current_index != -1)
+            //         {
+            //             bigramCounts[last_index][current_index] ++;
+            //         }
+            // }
+
+            for (int i=0; i< tokens.length - 1; i++)
+            {
+                int first_index = findIndex(vocabulary, tokens[i]);
+                int second_index = findIndex(vocabulary, tokens[i+1]);
+                if (first_index != -1 && second_index != -1)
+                {
+                    bigramCounts[first_index][second_index] ++;
+                }
+                last_index = second_index;
+            }
+        }
+
+        return bigramCounts;
     }
 
     /*
