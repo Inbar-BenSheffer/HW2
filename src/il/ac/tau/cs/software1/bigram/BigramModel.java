@@ -259,7 +259,49 @@ public class BigramModel {
      * @pre: fileName is a legal file path
      */
     public void loadModel(String fileName) throws IOException { // Question 4
-        // TODO: implement
+        this.mVocabulary = loadVocabulary(fileName);
+        this.mBigramCounts = loadBiagramCounts(fileName, this.mVocabulary.length);
+    }
+
+    private String[] loadVocabulary(String fileName) throws IOException
+    {
+        File srcFile = new File(fileName + VOC_FILE_SUFFIX);
+        BufferedReader br = new BufferedReader(new FileReader(srcFile));
+
+
+        int vocab_length = Integer.parseInt(br.readLine().trim().split("\\s+")[0]);
+        String[] vocab = new String[vocab_length];
+
+        for (int i =0; i< vocab_length; i++)
+        {
+            String line = br.readLine();
+            String word = line.trim().split(",")[1];
+            vocab[i] = word;
+        }
+
+
+        br.close();
+        return vocab;
+    }
+
+    private int[][] loadBiagramCounts(String fileName, int dim) throws IOException
+    {
+
+        File srcFile = new File(fileName + COUNTS_FILE_SUFFIX);
+        BufferedReader br = new BufferedReader(new FileReader(srcFile));
+
+        int[][] bigram_counts = new int[dim][dim];
+        
+        String line;
+        while ((line = br.readLine()) != null)
+        {
+            String[] tokens = line.trim().split(",|:");
+            bigram_counts[Integer.parseInt(tokens[0])][Integer.parseInt(tokens[1])] = Integer.parseInt(tokens[2]);
+        }
+
+        br.close();
+
+        return  bigram_counts;
     }
 
     /*
