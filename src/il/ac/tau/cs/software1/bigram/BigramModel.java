@@ -1,8 +1,10 @@
 package il.ac.tau.cs.software1.bigram;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Locale;
@@ -109,14 +111,18 @@ public class BigramModel {
         while ((line = br.readLine()) != null  && wordCnt < MAX_VOCABULARY_SIZE)
             {
                 String[] tokens = line.trim().split("\\s+");
-                for (String word:tokens)
+
+                int i = 0;
+                while(wordCnt< MAX_VOCABULARY_SIZE && i < tokens.length)
                 {
-                    String normWord = normalizeWord(word);
+                    String normWord = normalizeWord(tokens[i]);
                     if (normWord != null && !isWordinVocab(temp_vocab, normWord))
                     {
                         temp_vocab[wordCnt] = normWord;
                         wordCnt ++;
+                        
                     }
+                    i++;
                 }
             }
 
@@ -199,6 +205,8 @@ public class BigramModel {
             }
         }
 
+
+        br.close();
         return bigramCounts;
     }
 
@@ -207,9 +215,46 @@ public class BigramModel {
      * @pre: fileName is a legal file path
      */
     public void saveModel(String fileName) throws IOException { // Question 3
-        // TODO: implement
+        saveVocabulary(fileName);
+        saveCount(fileName);
     }
 
+    private void saveVocabulary(String fileName) throws IOException
+    {
+        File vocFile = new File(fileName + VOC_FILE_SUFFIX) ;
+
+        BufferedWriter vocBW = new BufferedWriter(new FileWriter(vocFile));
+
+        vocBW.write(Integer.toString(this.mVocabulary.length)+" words" + System.lineSeparator());
+        
+        for (String word:this.mVocabulary)
+        {
+            vocBW.write(Integer.toString(getWordIndex(word))+ "," +word+ System.lineSeparator());
+        }
+
+        vocBW.close();
+    }
+
+    private  void saveCount(String fileName) throws IOException
+    {
+        File cntFile = new File(fileName + COUNTS_FILE_SUFFIX);
+
+        BufferedWriter cntBW = new BufferedWriter(new FileWriter(cntFile));
+
+        for (int i = 0; i< this.mVocabulary.length; i++){
+            String row_word = mVocabulary[i];
+            for (int j = 0; j< this.mVocabulary.length; j++){
+                String column_word = mVocabulary[j];
+                int bigram_cnt = this.getBigramCount(row_word, column_word);
+                if (bigram_cnt > 0)
+                {
+                    cntBW.write(i+","+j+":"+bigram_cnt+System.lineSeparator());
+                }
+            }
+        }
+        cntBW.close();
+    }
+    
     /*
      * @pre: fileName is a legal file path
      */
